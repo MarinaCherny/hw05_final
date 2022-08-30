@@ -72,7 +72,7 @@ class PostUrlsTest(TestCase):
         response_for_image = self.authorized_client.get(reverse(
             'posts:profile', kwargs={'username': self.user}))
         self.assertIn(self.upload.name,
-            response_for_image.context.get('page_obj')[0].image.name)
+                      response_for_image.context.get('page_obj')[0].image.name)
 
     def test_edit_post(self):
         """Проверка редактирования поста"""
@@ -94,18 +94,17 @@ class PostUrlsTest(TestCase):
         """Проверка создание комментария авторизованным пользователем,
         комментарий создан и появился на странице поста"""
         count = Comment.objects.filter(post=self.post1.id).count()
-        form_data = {'text': 'Текст созданного комментария',}
+        form_data = {'text': 'Текст созданного комментария', }
         response = self.authorized_client.post(
-            reverse('posts:add_comment', kwargs={'post_id': self.post1.id}
-            ),
+            reverse(
+                'posts:add_comment', kwargs={'post_id': self.post1.id}),
             data=form_data,
             follow=True
         )
         self.assertTrue(
             Comment.objects.filter(
-            post=self.post1.id,
-            text=form_data['text']
-        ).exists()
+               post=self.post1.id,
+               text=form_data['text']).exists()
         )
         self.assertRedirects(response, reverse(
            'posts:post_detail', kwargs={'post_id': self.post1.id}
@@ -114,8 +113,8 @@ class PostUrlsTest(TestCase):
             Comment.objects.filter(post=self.post1.id).count(), count + 1
         )
         response = self.authorized_client.get(
-            reverse('posts:post_detail', kwargs={'post_id': self.post1.id}
-            ))
+            reverse('posts:post_detail', kwargs={'post_id': self.post1.id})
+        )
         self.assertEqual(
             response.context.get('comments')[0].text, form_data['text']
         )
@@ -127,16 +126,14 @@ class PostUrlsTest(TestCase):
            'text': 'Текст попытка неавтиоризованного пользователя',
         }
         self.client.post(
-            reverse('posts:add_comment', kwargs={'post_id': self.post1.id}
-            ),
+            reverse('posts:add_comment', kwargs={'post_id': self.post1.id}),
             data=form_data,
             follow=True
         )
         self.assertFalse(
             Comment.objects.filter(
-            post=self.post1.id,
-            text=form_data['text']
-        ).exists()
+                post=self.post1.id,
+                text=form_data['text']).exists()
         )
         self.assertEqual(
             Comment.objects.filter(post=self.post1.id).count(), count

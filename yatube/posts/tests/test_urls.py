@@ -34,18 +34,15 @@ class PostUrlsTest(TestCase):
         """Проверка общедоступных страниц"""
         pages = {
             reverse('posts:home'): 'posts/index.html',
-            reverse(
-                'posts:group_posts',
-                    kwargs={'slug': 
-                        f'{self.group.slug}'}): 'posts/group_list.html',
-            reverse(
-                'posts:profile',
-                    kwargs={'username':
-                        f'{self.user.username}'}): 'posts/profile.html',
-            reverse(
-                'posts:post_detail',
-                    kwargs={'post_id':
-                        f'{self.post.id}'}): 'posts/post_detail.html',
+            reverse('posts:group_posts',
+                    kwargs={'slug': f'{self.group.slug}'}):
+                        'posts/group_list.html',
+            reverse('posts:profile',
+                    kwargs={'username': f'{self.user.username}'}):
+                        'posts/profile.html',
+            reverse('posts:post_detail',
+                    kwargs={'post_id': f'{self.post.id}'}):
+                        'posts/post_detail.html',
         }
         for page in pages:
             with self.subTest(page=page):
@@ -65,8 +62,8 @@ class PostUrlsTest(TestCase):
 
     def test_url_available_to_author_post(self):
         """Проверка доступности поста автору"""
-        response = self.post_author.get(reverse('posts:post_edit',
-           kwargs={'post_id': f'{self.post.id}'}
+        response = self.post_author.get(reverse(
+           'posts:post_edit', kwargs={'post_id': f'{self.post.id}'}
         ))
         self.assertEqual(response.status_code, HTTPStatus.OK)
 
@@ -74,18 +71,18 @@ class PostUrlsTest(TestCase):
         """Проверка шаблонов по адресам"""
         templates_url_names = {
             reverse('posts:home'): 'posts/index.html',
-            reverse(
-                'posts:group_posts', kwargs={'slug': f'{self.group.slug}'}):
-                'posts/group_list.html',
-            reverse(
-                'posts:profile', kwargs={'username': f'{self.user.username}'}):
-                'posts/profile.html',
-            reverse(
-                'posts:post_detail', kwargs={'post_id': f'{self.post.id}'}):
-                'posts/post_detail.html',
-            reverse(
-                'posts:post_edit', kwargs={'post_id': f'{self.post.id}'}):
-                'posts/create_post.html',
+            reverse('posts:group_posts',
+                    kwargs={'slug': f'{self.group.slug}'}):
+                        'posts/group_list.html',
+            reverse('posts:profile',
+                    kwargs={'username': f'{self.user.username}'}):
+                        'posts/profile.html',
+            reverse('posts:post_detail',
+                    kwargs={'post_id': f'{self.post.id}'}):
+                        'posts/post_detail.html',
+            reverse('posts:post_edit',
+                    kwargs={'post_id': f'{self.post.id}'}):
+                        'posts/create_post.html',
             reverse('posts:post_create'): 'posts/create_post.html',
             reverse('posts:follow_index'): 'posts/follow.html',
         }
