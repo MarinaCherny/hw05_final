@@ -63,7 +63,7 @@ class PostUrlsTest(TestCase):
     def test_url_available_to_author_post(self):
         """Проверка доступности поста автору"""
         response = self.post_author.get(reverse(
-           'posts:post_edit', kwargs={'post_id': f'{self.post.id}'}
+            'posts:post_edit', kwargs={'post_id': f'{self.post.id}'}
         ))
         self.assertEqual(response.status_code, HTTPStatus.OK)
 
@@ -106,6 +106,6 @@ class PostUrlsTest(TestCase):
         authorized_client2 = Client()
         authorized_client2.force_login(user2)
         response = authorized_client2.get(reverse(
-                'posts:post_edit', kwargs={'post_id': f'{self.post.id}'}))
+            'posts:post_edit', kwargs={'post_id': f'{self.post.id}'}))
         self.assertRedirects(response, reverse(
-                'posts:post_detail', kwargs={'post_id': f'{self.post.id}'}))
+            'posts:post_detail', kwargs={'post_id': f'{self.post.id}'}))

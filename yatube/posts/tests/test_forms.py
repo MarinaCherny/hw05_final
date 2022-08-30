@@ -103,11 +103,11 @@ class PostUrlsTest(TestCase):
         )
         self.assertTrue(
             Comment.objects.filter(
-               post=self.post1.id,
-               text=form_data['text']).exists()
+                post=self.post1.id,
+                text=form_data['text']).exists()
         )
         self.assertRedirects(response, reverse(
-           'posts:post_detail', kwargs={'post_id': self.post1.id}
+            'posts:post_detail', kwargs={'post_id': self.post1.id}
         ))
         self.assertEqual(
             Comment.objects.filter(post=self.post1.id).count(), count + 1
@@ -123,7 +123,7 @@ class PostUrlsTest(TestCase):
         """Комменарий не может быть внесен неавторизованным пользователем"""
         count = Comment.objects.filter(post=self.post1.id).count()
         form_data = {
-           'text': 'Текст попытка неавтиоризованного пользователя',
+            'text': 'Текст попытка неавтиоризованного пользователя',
         }
         self.client.post(
             reverse('posts:add_comment', kwargs={'post_id': self.post1.id}),
