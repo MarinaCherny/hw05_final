@@ -32,7 +32,7 @@ class PostModelTest(TestCase):
         for value, expected in field_verboses.items():
             with self.subTest(value=value):
                 self.assertEqual(
-                Post._meta.get_field(value).verbose_name, expected)
+                    Post._meta.get_field(value).verbose_name, expected)
 
     def test_help_text(self):
         """help_text в полях совпадает с ожидаемым."""
@@ -43,7 +43,7 @@ class PostModelTest(TestCase):
         for value, expected in field_verboses.items():
             with self.subTest(value=value):
                 self.assertEqual(
-                Post._meta.get_field(value).help_text, expected)
+                    Post._meta.get_field(value).help_text, expected)
 
     def test_correct_object_names(self):
         """Проверка метода __str__"""

@@ -1,10 +1,8 @@
-from pdb import post_mortem
-
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
 
 from .forms import CommentForm, PostForm
-from .models import Comment, Follow, Group, Post, User
+from .models import Follow, Group, Post, User
 from .utils import get_pages
 
 
@@ -97,6 +95,7 @@ def post_edit(request, post_id):
     }
     return render(request, template, context)
 
+
 @login_required
 def add_comment(request, post_id):
     post = get_object_or_404(Post, id=post_id)
@@ -108,6 +107,7 @@ def add_comment(request, post_id):
         comment.save()
     return redirect('posts:post_detail', post_id=post_id)
 
+
 @login_required
 def profile_follow(request, username):
     if username != request.user.username:
@@ -118,6 +118,7 @@ def profile_follow(request, username):
         )
     return redirect('posts:profile', username=username)
 
+
 @login_required
 def profile_unfollow(request, username):
     get_object_or_404(
@@ -126,6 +127,7 @@ def profile_unfollow(request, username):
         author__username=username
     ).delete()
     return redirect('posts:profile', username=username)
+
 
 @login_required
 def follow_index(request):

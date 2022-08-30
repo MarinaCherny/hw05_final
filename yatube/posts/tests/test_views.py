@@ -1,6 +1,5 @@
 import shutil
 import tempfile
-from email.mime import image
 from time import sleep
 
 from django import forms
@@ -16,6 +15,7 @@ from ..models import Follow, Group, Post
 User = get_user_model()
 
 TEMP_MEDIA_ROOT = tempfile.mkdtemp(dir=settings.BASE_DIR)
+
 
 @override_settings(MEDIA_ROOT=TEMP_MEDIA_ROOT)
 class PostViewsTest(TestCase):
@@ -70,7 +70,6 @@ class PostViewsTest(TestCase):
         cls.post_author = Client()
         # Создаем пользователя автора
         cls.post_author.force_login(cls.post_1.author)
-
 
     @classmethod
     def tearDownClass(cls):
@@ -215,25 +214,27 @@ class PostViewsTest(TestCase):
             user=self.user_1.id,
             author=self.user_2.id).exists()
         )
-    
+
     def test_follow_output_in_user_feed(self):
-        """Новая запись пользователя появляется в ленте тех, кто на него 
+        """Новая запись пользователя появляется в ленте тех, кто на него
         подписан и не появляется в ленте тех, кто не подписан."""
-        authorized_client2= Client()
+        authorized_client2 = Client()
         authorized_client2.force_login(self.user_2)
 
         new_post = Post.objects.create(
             text='Новый пост test user 2',
             author=self.user_2
         )
-        #user_1 подписан на user_2
+        # user_1 подписан на user_2
         self.authorized_client.get(reverse(
             'posts:profile_follow',
             kwargs={'username': self.user_2.username}
         ))
-        #user_1 видит пост user_2 в своей ленте
-        #user_2 не видит пост user_1 в своей ленте
-        response_user_1 = self.authorized_client.get(reverse('posts:follow_index'))
+        # user_1 видит пост user_2 в своей ленте
+        # user_2 не видит пост user_1 в своей ленте
+        response_user_1 = self.authorized_client.get(
+            reverse('posts:follow_index')
+        )
         response_user_2 = authorized_client2.get(reverse('posts:follow_index'))
         self.assertIn(new_post, response_user_1.context['page_obj'])
         self.assertNotIn(self.post_1, response_user_2.context['page_obj'])
@@ -295,6 +296,7 @@ class ViewsPaginatorTest(TestCase):
             'posts:group_posts',
             kwargs={'slug': self.group.slug}) + '?page=2')
         self.assertEqual(len(response.context['page_obj']), 3)
+
 
 class CacheViewTest(TestCase):
     @classmethod

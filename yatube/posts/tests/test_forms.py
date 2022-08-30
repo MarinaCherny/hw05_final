@@ -1,9 +1,6 @@
 import shutil
 import tempfile
-from pickle import TRUE
-from turtle import pos
 
-from django import forms
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.files.uploadedfile import SimpleUploadedFile
@@ -15,6 +12,7 @@ from ..models import Comment, Group, Post
 User = get_user_model()
 
 TEMP_MEDIA_ROOT = tempfile.mkdtemp(dir=settings.BASE_DIR)
+
 
 @override_settings(MEDIA_ROOT=TEMP_MEDIA_ROOT)
 class PostUrlsTest(TestCase):

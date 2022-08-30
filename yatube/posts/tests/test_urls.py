@@ -35,15 +35,15 @@ class PostUrlsTest(TestCase):
         pages = {
             reverse('posts:home'): 'posts/index.html',
             reverse(
-                'posts:group_posts', kwargs={'slug': f'{self.group.slug}'}
-                ): 'posts/group_list.html',
+                'posts:group_posts', kwargs={'slug': f'{self.group.slug}'}):
+                'posts/group_list.html',
             reverse(
-                'posts:profile', kwargs={'username': f'{self.user.username}'}
-                ): 'posts/profile.html',
+                'posts:profile', kwargs={'username': f'{self.user.username}'}):
+                'posts/profile.html',
             reverse(
-                'posts:post_detail', kwargs={'post_id': f'{self.post.id}'}
-                ): 'posts/post_detail.html',
-        } 
+                'posts:post_detail', kwargs={'post_id': f'{self.post.id}'}):
+                'posts/post_detail.html',
+        }
         for page in pages:
             with self.subTest(page=page):
                 response = self.client.get(page)
@@ -62,9 +62,9 @@ class PostUrlsTest(TestCase):
 
     def test_url_available_to_author_post(self):
         """Проверка доступности поста автору"""
-        response = self.post_author.get(reverse(
-                'posts:post_edit', kwargs={'post_id': f'{self.post.id}'}
-                ))
+        response = self.post_author.get(reverse('posts:post_edit',
+           kwargs={'post_id': f'{self.post.id}'}
+        ))
         self.assertEqual(response.status_code, HTTPStatus.OK)
 
     def test_urls_uses_correct_template(self):
@@ -72,17 +72,17 @@ class PostUrlsTest(TestCase):
         templates_url_names = {
             reverse('posts:home'): 'posts/index.html',
             reverse(
-                'posts:group_posts', kwargs={'slug': f'{self.group.slug}'}
-                ): 'posts/group_list.html',
+                'posts:group_posts', kwargs={'slug': f'{self.group.slug}'}):
+                'posts/group_list.html',
             reverse(
-                'posts:profile', kwargs={'username': f'{self.user.username}'}
-                ): 'posts/profile.html',
+                'posts:profile', kwargs={'username': f'{self.user.username}'}):
+                'posts/profile.html',
             reverse(
-                'posts:post_detail', kwargs={'post_id': f'{self.post.id}'}
-                ): 'posts/post_detail.html',
+                'posts:post_detail', kwargs={'post_id': f'{self.post.id}'}):
+                'posts/post_detail.html',
             reverse(
-                'posts:post_edit', kwargs={'post_id': f'{self.post.id}'}
-                ): 'posts/create_post.html',
+                'posts:post_edit', kwargs={'post_id': f'{self.post.id}'}):
+                'posts/create_post.html',
             reverse('posts:post_create'): 'posts/create_post.html',
             reverse('posts:follow_index'): 'posts/follow.html',
         }
@@ -106,7 +106,6 @@ class PostUrlsTest(TestCase):
         authorized_client2 = Client()
         authorized_client2.force_login(user2)
         response = authorized_client2.get(reverse(
-                'posts:post_edit', kwargs={'post_id': f'{self.post.id}'}
-                ))
+                'posts:post_edit', kwargs={'post_id': f'{self.post.id}'}))
         self.assertRedirects(response, reverse(
                 'posts:post_detail', kwargs={'post_id': f'{self.post.id}'}))
