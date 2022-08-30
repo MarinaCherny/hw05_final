@@ -35,14 +35,17 @@ class PostUrlsTest(TestCase):
         pages = {
             reverse('posts:home'): 'posts/index.html',
             reverse(
-                'posts:group_posts', kwargs={'slug': f'{self.group.slug}'}):
-                'posts/group_list.html',
+                'posts:group_posts',
+                    kwargs={'slug': 
+                        f'{self.group.slug}'}): 'posts/group_list.html',
             reverse(
-                'posts:profile', kwargs={'username': f'{self.user.username}'}):
-                'posts/profile.html',
+                'posts:profile',
+                    kwargs={'username':
+                        f'{self.user.username}'}): 'posts/profile.html',
             reverse(
-                'posts:post_detail', kwargs={'post_id': f'{self.post.id}'}):
-                'posts/post_detail.html',
+                'posts:post_detail',
+                    kwargs={'post_id':
+                        f'{self.post.id}'}): 'posts/post_detail.html',
         }
         for page in pages:
             with self.subTest(page=page):

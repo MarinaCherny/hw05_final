@@ -85,8 +85,8 @@ class PostUrlsTest(TestCase):
         )
         self.assertTrue(
             Post.objects.filter(
-            id=self.post1.pk,
-            text=form_data['text'],
+                id=self.post1.pk,
+                text=form_data['text'],
             ).exists()
         )
 
@@ -94,9 +94,7 @@ class PostUrlsTest(TestCase):
         """Проверка создание комментария авторизованным пользователем,
         комментарий создан и появился на странице поста"""
         count = Comment.objects.filter(post=self.post1.id).count()
-        form_data = {
-           'text': 'Текст созданного комментария',
-        }
+        form_data = {'text': 'Текст созданного комментария',}
         response = self.authorized_client.post(
             reverse('posts:add_comment', kwargs={'post_id': self.post1.id}
             ),
