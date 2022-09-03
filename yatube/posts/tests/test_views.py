@@ -127,8 +127,7 @@ class PostViewsTest(TestCase):
         response = self.authorized_client.get(reverse(
             'posts:group_posts',
             kwargs={'slug': self.group_second_added.slug}
-            )
-        )
+        ))
         first_object = response.context.get('page_obj')[0]
 
         self.assertEqual(first_object.group.title,
@@ -143,7 +142,7 @@ class PostViewsTest(TestCase):
         response = self.authorized_client.get(reverse(
             'posts:profile',
             kwargs={'username': self.post_second_added.author}
-            ))
+        ))
         first_object = response.context.get('page_obj')[0]
 
         self.assertEqual(first_object.author.username,
@@ -156,7 +155,7 @@ class PostViewsTest(TestCase):
         """Проверка контекста: create сформирован с правильным контекстом."""
         response = self.authorized_client.get(reverse(
             'posts:post_create'
-            ))
+        ))
         form_fields = {
             'text': forms.fields.CharField,
             'group': forms.fields.ChoiceField,
@@ -171,7 +170,7 @@ class PostViewsTest(TestCase):
         response = self.authorized_client.get(reverse(
             'posts:post_edit',
             kwargs={'post_id': self.post_first_added.id}
-            ))
+        ))
         form_fields = {
             'text': forms.fields.CharField,
             'group': forms.fields.ChoiceField,
@@ -187,7 +186,7 @@ class PostViewsTest(TestCase):
         first_detail_post = self.authorized_client.get(reverse(
             'posts:post_detail',
             kwargs={'post_id': self.post_second_added.id}
-            ))
+        ))
         responses = {
             first_detail_post.context.get('post').author.username:
             self.post_second_added.author.username,
@@ -289,14 +288,12 @@ class ViewsPaginatorTest(TestCase):
         Post.objects.bulk_create(posts)
 
         cls.templates = {
-                1: reverse('posts:home'),
-                2: reverse('posts:group_posts',
-                           kwargs={'slug': cls.group.slug}
-                           ),
-                3: reverse('posts:profile',
-                           kwargs={'username': cls.author.username}
-                           )
-            }
+            1: reverse('posts:home'),
+            2: reverse('posts:group_posts', kwargs={'slug': cls.group.slug}),
+            3: reverse('posts:profile', kwargs={
+                'username': cls.author.username}
+            )
+        }
 
     def page_contains_ten_records(self):
         """Проверка: количество постов на первой cтранице равно 10."""

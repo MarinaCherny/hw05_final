@@ -86,8 +86,8 @@ class PostUrlsTest(TestCase):
         """Проверка редактирования поста"""
         group_field = self.group.id
         form_data = {
-                    'text': 'Обновленный текст',
-                    'group': group_field
+            'text': 'Обновленный текст',
+            'group': group_field
         }
         self.post_author.post(reverse(
             'posts:post_edit', kwargs={'post_id': self.post_for_test.id}
