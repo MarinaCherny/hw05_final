@@ -67,7 +67,7 @@ class PostUrlsTest(TestCase):
         self.assertEqual(Post.objects.count(), count + 1)
         self.assertRedirects(response, reverse(
             'posts:profile', kwargs={'username': self.user}
-            ))
+        ))
         self.assertTrue(
             Post.objects.filter(
                 author=self.user,
@@ -86,8 +86,8 @@ class PostUrlsTest(TestCase):
         """Проверка редактирования поста"""
         group_field = self.group.id
         form_data = {
-           'text': 'Обновленный текст',
-           'group': group_field
+                    'text': 'Обновленный текст',
+                    'group': group_field
         }
         self.post_author.post(reverse(
             'posts:post_edit', kwargs={'post_id': self.post_for_test.id}
@@ -100,11 +100,11 @@ class PostUrlsTest(TestCase):
                 id=self.post_for_test.id,
                 group=self.group.id,
                 text=form_data['text'],
-                ).exists()
+            ).exists()
         )
         response_edit_post = self.post_author.get(reverse(
             'posts:post_detail', kwargs={'post_id': f'{self.post_for_test.id}'}
-            ))
+        ))
         self.assertEqual(response_edit_post.context.get(
             'post').author.username, self.post_for_test.author.username
         )
