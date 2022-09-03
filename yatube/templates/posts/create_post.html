@@ -6,7 +6,7 @@
     Новый пост
   {% endif %}
 {% endblock %}
-
+{% load user_filters %}
 {% block content %}
 {% load thumbnail %}
   <div class="row justify-content-center">
@@ -21,12 +21,8 @@
         </div>
         <div class="card-body">
 
-          {% if is_edit %}
-          <form method="post" enctype="multipart/form-data" action="{% url 'posts:post_edit' post.pk %}">
-          {% else %}
-          <form method="post" enctype="multipart/form-data" action="{% url 'posts:post_create' %}">
-          {% endif %}
-
+          <form method="post" enctype="multipart/form-data"> 
+          
           {% csrf_token %}
           {% for field in form %}
             <div class="form-group row my-3 p-3">
@@ -36,12 +32,14 @@
                   <span class="required text-danger">*</span>
                 {% endif %}
               </label>    
-              {{ field }}
+              {{ field|addclass:"form-control" }}
+
               {% if field.help_text %}
                 <small id="{{ field.id_for_label }}-help" class="form-text text-muted">
                   {{ field.help_text|safe }}
                 </small>
               {% endif %}
+              
             </div>
           {% endfor %}
 

@@ -2,12 +2,12 @@
 {% block title %}Custom 404{% endblock %}
 {% block content %}
 <div class="container py-5">
-    <div class="row">
-      <h1>Custom 404</h1>
-      <article class="col-12 col-md-9">
-        <p>Страницы с адресом {{ path }} не существует</p>
-        <a href="{% url 'posts:home' %}">Идите на главную</a>
-      </article>
-    </div>
+  <div class="row">
+    <h1>Custom 404</h1>
+    <article class="col-12 col-md-9">
+      <p>Страницы с адресом {{ path }} не существует</p>
+      <a href="{% url 'posts:home' %}">Идите на главную</a>
+    </article>
   </div>
+</div>
 {% endblock %} 

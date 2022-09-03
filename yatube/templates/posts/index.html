@@ -7,6 +7,7 @@
   <div class="container py-5"> 
     {% include 'includes/switcher.html' %}    
     <h1>Последние обновления на сайте</h1>
+
     {% load cache %}
     {% cache 20 index_page with page_obj %}
       {% for post in page_obj %}
@@ -19,17 +20,22 @@
             Дата публикации: {{ post.pub_date|date:"d E Y" }}
           </li>
         </ul>
+
         {% thumbnail post.image "960x339" crop="center" upscale=True as im %}
           <img class="card-img my-2" src="{{ im.url }}">
         {% endthumbnail %}
+
         <p>{{ post.text }}</p>
-        <a href="{% url 'posts:post_detail' post.pk %}">подробная информация</a><br>
+
+        <a href="{% url 'posts:post_detail' post.id %}">подробная информация</a><br>
         {% if post.group %}     
         <a href="{% url 'posts:group_posts' post.group.slug %}">все записи группы</a>
-        {% endif %}     
+        {% endif %}
+             
         {% if not forloop.last %}<hr>{% endif %}
       {% endfor %}
     {% endcache %}
+
     {% include 'includes/paginator.html' %}
   </div>
 {% endblock %}

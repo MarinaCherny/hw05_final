@@ -1,12 +1,9 @@
 from http import HTTPStatus
 
-from django.contrib.auth import get_user_model
 from django.test import Client, TestCase
 from django.urls import reverse
 
-from ..models import Group, Post
-
-User = get_user_model()
+from ..models import Group, Post, User
 
 
 class PostUrlsTest(TestCase):
@@ -96,16 +93,16 @@ class PostUrlsTest(TestCase):
         """Проверка несуществующая страница выдает ошибку 404
         с кастомным шаблоном"""
         response = self.client.get('/unexisting_page/')
-        custom_template_404 = '/404.html'
+        custom_template_404 = 'core/404.html'
         self.assertEqual(response.status_code, HTTPStatus.NOT_FOUND)
-        self.assertTemplateUsed(custom_template_404)
+        self.assertTemplateUsed(response, custom_template_404)
 
     def test_redirect_non_author(self):
         """Проверка редиректа неавтора поста """
-        user2 = User.objects.create_user(username='test_user2')
-        authorized_client2 = Client()
-        authorized_client2.force_login(user2)
-        response = authorized_client2.get(reverse(
+        not_author = User.objects.create_user(username='test_not_author')
+        not_author_client = Client()
+        not_author_client.force_login(not_author)
+        response = not_author_client.get(reverse(
             'posts:post_edit', kwargs={'post_id': f'{self.post.id}'}))
         self.assertRedirects(response, reverse(
             'posts:post_detail', kwargs={'post_id': f'{self.post.id}'}))

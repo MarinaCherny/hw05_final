@@ -12,6 +12,7 @@
             <li class="list-group-item">
               Дата публикации: {{ post.pub_date|date:"d E Y" }} 
             </li>
+
             {% if post.group %}   
             <li class="list-group-item"> 
               Группа: {{ post.group.title }}
@@ -20,6 +21,7 @@
               </a>
             </li>
             {% endif %}
+
             <li class="list-group-item">
               Автор: {{ post.author.get_full_name }}
             </li>
@@ -31,18 +33,21 @@
                 все посты пользователя
               </a>
             </li>
+
           </ul>
         </aside>
+
         <article class="col-12 col-md-9">
           {% thumbnail post.image "960x339" crop="center" upscale=True as im %}
             <img class="card-img my-2" src="{{ im.url }}">
           {% endthumbnail %}
+
           <p>
             {{ post.text }}
           </p>          
           <p>
             {% if user.username == post.author.username %}
-            <a class="btn btn-primary" href="{% url 'posts:post_edit' post.pk %}">
+            <a class="btn btn-primary" href="{% url 'posts:post_edit' post.id %}">
                 редактировать запись
             </a>
             {% endif %}
@@ -77,7 +82,8 @@
                     </p>
                   </div>
                 </div>
-              {% endfor %} 
+              {% endfor %}
+               
             </div>
           </p> 
         </article>

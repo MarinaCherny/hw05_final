@@ -1,10 +1,6 @@
-
-from django.contrib.auth import get_user_model
 from django.test import TestCase
 
-from ..models import Group, Post
-
-User = get_user_model()
+from ..models import Group, Post, User
 
 
 class PostModelTest(TestCase):
@@ -43,7 +39,9 @@ class PostModelTest(TestCase):
         for value, expected in field_verboses.items():
             with self.subTest(value=value):
                 self.assertEqual(
-                    Post._meta.get_field(value).help_text, expected)
+                    Post._meta.get_field(value).help_text,
+                    expected
+                )
 
     def test_correct_object_names(self):
         """Проверка метода __str__"""
