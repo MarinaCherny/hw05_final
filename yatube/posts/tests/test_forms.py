@@ -24,14 +24,14 @@ class PostUrlsTest(TestCase):
             title='Тестовая группа',
             slug='test-slug',
         )
-        cls.post_for_test = Post.objects.create(
+        cls.post = Post.objects.create(
             author=cls.user,
             text='Тестовый пост',
         )
         cls.authorized_client = Client()
         cls.authorized_client.force_login(cls.user)
         cls.post_author = Client()
-        cls.post_author.force_login(cls.post_for_test.author)
+        cls.post_author.force_login(cls.post.author)
         cls.small_gif = (
             b'\x47\x49\x46\x38\x39\x61\x02\x00'
             b'\x01\x00\x80\x00\x00\x00\x00\x00'
@@ -90,23 +90,23 @@ class PostUrlsTest(TestCase):
             'group': group_field
         }
         self.post_author.post(reverse(
-            'posts:post_edit', kwargs={'post_id': self.post_for_test.id}
+            'posts:post_edit', kwargs={'post_id': self.post.id}
         ),
             data=form_data,
             follow=True
         )
         self.assertTrue(
             Post.objects.filter(
-                id=self.post_for_test.id,
+                id=self.post.id,
                 group=self.group.id,
                 text=form_data['text'],
             ).exists()
         )
         response_edit_post = self.post_author.get(reverse(
-            'posts:post_detail', kwargs={'post_id': f'{self.post_for_test.id}'}
+            'posts:post_detail', kwargs={'post_id': f'{self.post.id}'}
         ))
         self.assertEqual(response_edit_post.context.get(
-            'post').author.username, self.post_for_test.author.username
+            'post').author.username, self.post.author.username
         )
         self.assertEqual(response_edit_post.context.get(
             'post').text, form_data['text']
@@ -115,27 +115,27 @@ class PostUrlsTest(TestCase):
     def test_comment_create(self):
         """Проверка создание комментария авторизованным пользователем,
         комментарий создан и появился на странице поста"""
-        count = self.post_for_test.comments.count()
+        count = self.post.comments.count()
         form_data = {'text': 'Текст созданного комментария', }
         response = self.authorized_client.post(
             reverse(
                 'posts:add_comment',
-                kwargs={'post_id': self.post_for_test.id}),
+                kwargs={'post_id': self.post.id}),
             data=form_data,
             follow=True
         )
         self.assertTrue(
             Comment.objects.filter(
-                post=self.post_for_test.id,
+                post=self.post.id,
                 text=form_data['text']).exists()
         )
         self.assertRedirects(response, reverse(
-            'posts:post_detail', kwargs={'post_id': self.post_for_test.id}
+            'posts:post_detail', kwargs={'post_id': self.post.id}
         ))
-        self.assertEqual(self.post_for_test.comments.count(), count + 1)
+        self.assertEqual(self.post.comments.count(), count + 1)
         response = self.authorized_client.get(
             reverse('posts:post_detail',
-                    kwargs={'post_id': self.post_for_test.id})
+                    kwargs={'post_id': self.post.id})
         )
         self.assertEqual(
             response.context.get('comments')[0].text, form_data['text']
@@ -143,22 +143,22 @@ class PostUrlsTest(TestCase):
 
     def test_anonymous_cant_comment(self):
         """Комменарий не может быть внесен неавторизованным пользователем"""
-        count = Comment.objects.filter(post=self.post_for_test.id).count()
+        count = Comment.objects.filter(post=self.post.id).count()
         form_data = {
             'text': 'Текст попытка неавтиоризованного пользователя',
         }
         self.client.post(
             reverse('posts:add_comment',
-                    kwargs={'post_id': self.post_for_test.id}),
+                    kwargs={'post_id': self.post.id}),
             data=form_data,
             follow=True
         )
         self.assertFalse(
             Comment.objects.filter(
-                post=self.post_for_test.id,
+                post=self.post.id,
                 text=form_data['text']
             ).exists()
         )
         self.assertEqual(
-            Comment.objects.filter(post=self.post_for_test.id).count(), count
+            Comment.objects.filter(post=self.post.id).count(), count
         )

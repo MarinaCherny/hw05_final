@@ -98,9 +98,8 @@ def profile(request, username):
     template = 'posts/profile.html'
     author = get_object_or_404(User, username=username)
     post_count = author.posts.count()
-    # if request.user.is_authenticated:
     is_following = author.following.filter(
-        user=request.user.is_authenticated).exists()
+        user_id=request.user.id).exists()
     context = {
         'author': author,
         'post_count': post_count,
