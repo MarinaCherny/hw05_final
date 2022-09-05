@@ -242,8 +242,8 @@ class PostViewsTest(TestCase):
         """Авторизованный пользователь может создвать подписки"""
         another_user = User.objects.create_user(username='another_user')
         Post.objects.create(
-           author=another_user,
-           text='Еще один тестовый пост'
+            author=another_user,
+            text='Еще один тестовый пост'
         )
         self.authorised_client.get(
             reverse(
@@ -260,8 +260,8 @@ class PostViewsTest(TestCase):
         """Авторизованный пользователь может удалять подписки"""
         another_user = User.objects.create_user(username='another_user')
         Post.objects.create(
-           author=another_user,
-           text='Еще один тестовый пост'
+            author=another_user,
+            text='Еще один тестовый пост'
         )
         self.authorised_client.get(
             reverse(
@@ -285,8 +285,8 @@ class PostViewsTest(TestCase):
         подписан ."""
         another_user = User.objects.create_user(username='another_user')
         new_post = Post.objects.create(
-           author=another_user,
-           text='Еще один тестовый пост'
+            author=another_user,
+            text='Еще один тестовый пост'
         )
 
         # user подписан на another_use
@@ -307,8 +307,8 @@ class PostViewsTest(TestCase):
         не подписан."""
         another_user = User.objects.create_user(username='another_user')
         new_post = Post.objects.create(
-           author=another_user,
-           text='Еще один тестовый пост'
+            author=another_user,
+            text='Еще один тестовый пост'
         )
         response_user = self.authorised_client.get(
             reverse('posts:follow_index')
