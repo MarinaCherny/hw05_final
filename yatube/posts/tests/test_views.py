@@ -45,16 +45,63 @@ class PostViewsTest(TestCase):
             image=cls.uploaded,
             group=cls.group
         )
-        cls.authorised_client = Client()
+        cls.authorized_client = Client()
         # Авторизуем пользователя
-        cls.authorised_client.force_login(cls.user)
+        cls.authorized_client.force_login(cls.user)
         # Пользователь является автором
-        cls.authorised_client.force_login(cls.post.author)
+        cls.authorized_client.force_login(cls.post.author)
 
     @classmethod
     def tearDownClass(cls):
         super().tearDownClass()
         shutil.rmtree(TEMP_MEDIA_ROOT, ignore_errors=True)
+
+    def check_post_context(self, source_post, compared_post):
+        self.assertEqual(source_post.author, compared_post.author)
+        self.assertEqual(source_post.group, compared_post.group)
+        self.assertEqual(source_post.image, compared_post.image)
+        self.assertEqual(source_post.pub_date, compared_post.pub_date)
+        self.assertEqual(source_post.text, compared_post.text)
+
+    def test_home_page_show_correct_context(self):
+        """Проверка контекста: home сформирован с правильным контекстом,
+        включена проверка вывода изображения."""
+        response = self.authorized_client.get(reverse('posts:home'))
+        self.check_post_context(self.post, response.context.get('page_obj')[0])
+
+    def test_group_page_correct_context(self):
+        """Проверка контекста: group_list сформирован
+        с правильным контекстом, пост на странице группы
+        выводится с изображением"""
+        response = self.authorized_client.get(
+            reverse(
+                'posts:group_posts',
+                kwargs={'slug': self.group.slug}
+            )
+        )
+        self.check_post_context(self.post, response.context.get('page_obj')[0])
+
+    def test_profile_page_correct_context(self):
+        """Проверка контекста: profile сформирован с
+        правильным контекстом, включена проверка вывода изображения."""
+        response = self.authorized_client.get(
+            reverse(
+                'posts:profile',
+                kwargs={'username': self.post.author}
+            )
+        )
+        self.check_post_context(self.post, response.context.get('page_obj')[0])
+
+    def test_post_detail_correct_context(self):
+        """Проверка контекста: detail выводит один пост
+        отфильтрованный по id, включена проверка вывода изображения."""
+        response = self.authorized_client.get(
+            reverse(
+                'posts:post_detail',
+                kwargs={'post_id': self.post.id}
+            )
+        )
+        self.check_post_context(self.post, response.context.get('post'))
 
     def test_pages_uses_correct_template(self):
         """Проверка namespace:name в view правильные html-шаблоны"""
@@ -81,54 +128,8 @@ class PostViewsTest(TestCase):
         }
         for reverse_name, template in templates_pages_names.items():
             with self.subTest(reverse_name=reverse_name):
-                response = self.authorised_client.get(reverse_name)
+                response = self.authorized_client.get(reverse_name)
                 self.assertTemplateUsed(response, template)
-
-    def test_home_page_show_correct_context(self):
-        """Проверка контекста: home сформирован с правильным контекстом,
-        включена проверка вывода изображения."""
-        response = self.authorised_client.get(reverse('posts:home'))
-        home_page = response.context.get('page_obj')[0]
-
-        responses = {
-            home_page.author.username:
-            self.post.author.username,
-            home_page.text:
-            self.post.text,
-            home_page.group.title:
-            self.post.group.title,
-            home_page.image:
-            self.post.image,
-        }
-        for response, chek_value in responses.items():
-            with self.subTest(response=response):
-                self.assertEqual(response, chek_value)
-
-    def test_group_page_correct_context(self):
-        """Проверка контекста: group_list сформирован
-        с правильным контекстом, пост на странице группы
-        выводится с изображением"""
-        group_page = self.authorised_client.get(
-            reverse(
-                'posts:group_posts',
-                kwargs={'slug': self.group.slug}
-            )
-        )
-
-        responses = {
-            group_page.context.get('page_obj')[0].author.username:
-            self.post.author.username,
-            group_page.context.get('page_obj')[0].text:
-            self.post.text,
-            group_page.context.get('page_obj')[0].group.title:
-            self.post.group.title,
-            group_page.context.get('page_obj')[0].image:
-            self.post.image,
-        }
-
-        for response, chek_value in responses.items():
-            with self.subTest(response=response):
-                self.assertEqual(response, chek_value)
 
     def test_group_page_correct_group(self):
         """group_list выводит записи только одной группы"""
@@ -148,7 +149,7 @@ class PostViewsTest(TestCase):
         )
         count_post_test_group = Post.objects.filter(group=self.group).count()
 
-        group_page = self.authorised_client.get(
+        group_page = self.authorized_client.get(
             reverse(
                 'posts:group_posts',
                 kwargs={'slug': self.group.slug}
@@ -158,33 +159,9 @@ class PostViewsTest(TestCase):
             len(group_page.context['page_obj']), count_post_test_group
         )
 
-    def test_profile_page_correct_context(self):
-        """Проверка контекста: profile сформирован с
-        правильным контекстом, включена проверка вывода изображения."""
-        profile_page = self.authorised_client.get(
-            reverse(
-                'posts:profile',
-                kwargs={'username': self.post.author}
-            )
-        )
-        responses = {
-            profile_page.context.get('page_obj')[0].author.username:
-            self.post.author.username,
-            profile_page.context.get('page_obj')[0].text:
-            self.post.text,
-            profile_page.context.get('page_obj')[0].group.title:
-            self.post.group.title,
-            profile_page.context.get('page_obj')[0].image:
-            self.post.image,
-        }
-
-        for response, chek_value in responses.items():
-            with self.subTest(response=response):
-                self.assertEqual(response, chek_value)
-
     def test_create_page_correct_context(self):
         """Проверка контекста: create сформирован с правильным контекстом."""
-        response = self.authorised_client.get(
+        response = self.authorized_client.get(
             reverse(
                 'posts:post_create'
             )
@@ -200,7 +177,7 @@ class PostViewsTest(TestCase):
 
     def test_edit_page_correct_context(self):
         """Проверка контекста: edit сформирован с правильным контекстом."""
-        response = self.authorised_client.get(
+        response = self.authorized_client.get(
             reverse(
                 'posts:post_edit',
                 kwargs={'post_id': self.post.id}
@@ -215,28 +192,28 @@ class PostViewsTest(TestCase):
                 form_field = response.context.get('form').fields.get(value)
                 self.assertIsInstance(form_field, expected)
 
-    def test_post_detail_correct_context(self):
-        """Проверка контекста: detail выводит один пост
-        отфильтрованный по id, включена проверка вывода изображения."""
-        detail_post = self.authorised_client.get(
-            reverse(
-                'posts:post_detail',
-                kwargs={'post_id': self.post.id}
-            )
-        )
-        responses = {
-            detail_post.context.get('post').author.username:
-            self.post.author.username,
-            detail_post.context.get('post').text:
-            self.post.text,
-            detail_post.context.get('post').group.title:
-            self.post.group.title,
-            detail_post.context.get('post').image:
-            self.post.image,
-        }
-        for response, chek_value in responses.items():
-            with self.subTest(response=response):
-                self.assertEqual(response, chek_value)
+    # def test_post_detail_correct_context(self):
+    #     """Проверка контекста: detail выводит один пост
+    #     отфильтрованный по id, включена проверка вывода изображения."""
+    #     detail_post = self.authorized_client.get(
+    #         reverse(
+    #             'posts:post_detail',
+    #             kwargs={'post_id': self.post.id}
+    #         )
+    #     )
+    #     responses = {
+    #         detail_post.context.get('post').author.username:
+    #         self.post.author.username,
+    #         detail_post.context.get('post').text:
+    #         self.post.text,
+    #         detail_post.context.get('post').group.title:
+    #         self.post.group.title,
+    #         detail_post.context.get('post').image:
+    #         self.post.image,
+    #     }
+    #     for response, chek_value in responses.items():
+    #         with self.subTest(response=response):
+    #             self.assertEqual(response, chek_value)
 
     def test_follow_user(self):
         """Авторизованный пользователь может создвать подписки"""
@@ -245,7 +222,7 @@ class PostViewsTest(TestCase):
             author=another_user,
             text='Еще один тестовый пост'
         )
-        self.authorised_client.get(
+        self.authorized_client.get(
             reverse(
                 'posts:profile_follow',
                 kwargs={'username': another_user}
@@ -263,13 +240,13 @@ class PostViewsTest(TestCase):
             author=another_user,
             text='Еще один тестовый пост'
         )
-        self.authorised_client.get(
+        self.authorized_client.get(
             reverse(
                 'posts:profile_follow',
                 kwargs={'username': another_user}
             )
         )
-        self.authorised_client.get(
+        self.authorized_client.get(
             reverse(
                 'posts:profile_unfollow',
                 kwargs={'username': another_user}
@@ -290,14 +267,14 @@ class PostViewsTest(TestCase):
         )
 
         # user подписан на another_use
-        self.authorised_client.get(
+        self.authorized_client.get(
             reverse(
                 'posts:profile_follow',
                 kwargs={'username': another_user.username}
             )
         )
         # user видит пост another_user в своей ленте
-        response_user = self.authorised_client.get(
+        response_user = self.authorized_client.get(
             reverse('posts:follow_index')
         )
         self.assertIn(new_post, response_user.context['page_obj'])
@@ -310,7 +287,7 @@ class PostViewsTest(TestCase):
             author=another_user,
             text='Еще один тестовый пост'
         )
-        response_user = self.authorised_client.get(
+        response_user = self.authorized_client.get(
             reverse('posts:follow_index')
         )
         self.assertNotIn(new_post,
@@ -323,8 +300,8 @@ class ViewsPaginatorTest(TestCase):
     def setUpClass(cls):
         super().setUpClass()
         cls.author = User.objects.create_user(username='test_user')
-        cls.authorised_client = Client()
-        cls.authorised_client.force_login(cls.author)
+        cls.authorized_client = Client()
+        cls.authorized_client.force_login(cls.author)
         cls.group = Group.objects.create(
             title='test_group',
             slug='test-slug',
