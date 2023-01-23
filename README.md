@@ -1,3 +1,48 @@
-# hw05_final
+# Social network for bloggers Yatube
+Социальная сеть для блогов Yatube.
+Поддерживает: учетные записи, публикации, подписки, комментарии.
 
-[![CI](https://github.com/yandex-praktikum/hw05_final/actions/workflows/python-app.yml/badge.svg?branch=master)](https://github.com/yandex-praktikum/hw05_final/actions/workflows/python-app.yml)
+## Возможности 
+
+- Создавать записи на своей странице
+- Заходить на чужие страницы, комментировать их
+- Подписываться на других авторов
+
+## Технологии
+
+- Python 3.7
+- Django 2.2.19
+- HTML+CSS (Bootstrap 3)
+- jwt token authorize
+- Pillow 8.3.1
+- sorl-thumbnail 12.7.0
+- unittest (Unit test framework)
+
+## Покрытие тестами
+
+Покрытие тестами выполнено при помощи unittest(Unit test framework) Тесты находятся в папке ./yatube/posts/test/. 
+
+- тесты кэширования страниц
+- тесты комментариев
+- тесты следования и подписок на авторов
+- тесты форм
+- тесты загрузки изображений
+- тесты моделей базы данных
+- тесты URL проекта
+- тесты view функций
+
+## Запуск проекта в dev режиме
+
+- Установите и активируйте виртуальное окружение
+- Установите зависимости из файла requirements.txt
+```sh
+pip install -r requirements
+```
+- Выполните миграции
+```sh
+python manage.py migrate
+```
+- В папке с файлом manage.py выполните команду
+```sh
+python manage.py runserver
+```
